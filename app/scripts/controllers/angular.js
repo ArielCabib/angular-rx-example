@@ -8,8 +8,12 @@
  * Controller of the angularJsExampleApp
  */
 angular.module('angularJsExampleApp')
-  .controller('AngularCtrl', function ($scope, $http, rx) {
-    function searchWikipedia (term) {
+  .controller('AngularCtrl', ['$scope', '$http', 'rx', function($scope, $http, rx) {
+    $scope.search = '';
+    $scope.results = [];
+
+    var search = function(term) {
+
       var deferred = $http({
         url: "http://en.wikipedia.org/w/api.php?&callback=JSON_CALLBACK",
         method: "jsonp",
@@ -22,21 +26,34 @@ angular.module('angularJsExampleApp')
 
       return rx.Observable
         .fromPromise(deferred)
-        .map(function(response){ return response.data[1]; });
-    }
+        .retry(10) // Retry 10 times then give up
+        .map(function(response){
+          return response.data[1];
+        });
+    };
 
-    $scope.search = '';
-    $scope.results = [];
-
-    /*
-     The following code deals with:
-
-     Creates a "submit" function which is an observable sequence instead of just a function.
-     */
-    $scope.$createObservableFunction('submit')
-      .map(function (term) { return term; })
-      .flatMapLatest(searchWikipedia)
-      .subscribe(function(results) {
-        $scope.results = results;
+    $scope
+      .$toObservable('search')
+      .map(function(data){
+        console.log('newValue: ' + data.newValue);
+        return data.newValue;
+      })
+      .debounce(1000)
+      .map(function(x) {
+        console.log('debounce:' + x);
+        return x;
+      })
+      .distinctUntilChanged()
+      .map(function(x) {
+        console.log('distinctUntilChanged:' + x);
+        return x;
+      })
+      .select(search)
+      .switchLatest()
+      .subscribe(function(val){
+        $scope.$apply(function() {
+          $scope.results = val;
+        });
+        //$scope.results = val;
       });
-  });
+  }]);
