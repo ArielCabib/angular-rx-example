@@ -37,10 +37,11 @@ angular
         controller: 'AngularCtrl',
         controllerAs: 'ctrl'
       })
+      .when('/time', {
+        templateUrl: 'views/time_flies.html'
+      })
       .when('/canvas', {
-        templateUrl: 'views/canvas.html',
-        controller: 'MainCtrl',
-        controllerAs: 'main'
+        templateUrl: 'views/canvas.html'
       })
       .otherwise({
         redirectTo: '/'
