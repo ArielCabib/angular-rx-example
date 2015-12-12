@@ -15,12 +15,12 @@ angular.module('angularJsExampleApp')
     var search = function(term) {
 
       var deferred = $http({
-        url: "http://en.wikipedia.org/w/api.php?&callback=JSON_CALLBACK",
-        method: "jsonp",
+        url: 'http://en.wikipedia.org/w/api.php?&callback=JSON_CALLBACK',
+        method: 'jsonp',
         params: {
-          action: "opensearch",
+          action: 'opensearch',
           search: term,
-          format: "json"
+          format: 'json'
         }
       });
 

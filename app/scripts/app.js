@@ -37,6 +37,11 @@ angular
         controller: 'AngularCtrl',
         controllerAs: 'ctrl'
       })
+      .when('/canvas', {
+        templateUrl: 'views/canvas.html',
+        controller: 'MainCtrl',
+        controllerAs: 'main'
+      })
       .otherwise({
         redirectTo: '/'
       });
